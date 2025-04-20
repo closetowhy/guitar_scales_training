@@ -25,10 +25,10 @@ if (!scaleModeCheckbox.checked) {
 }
 
 // Додаємо обробник події для чекбокса
-scaleModeCheckbox.addEventListener('change', () => {
-  // Симулюємо клік кнопки при зміні стану чекбокса
-  startBtn.click();
-});
+// scaleModeCheckbox.addEventListener('change', () => {
+//   // Симулюємо клік кнопки при зміні стану чекбокса
+//   startBtn.click();
+// });
 
 // Add an event listener for the keydown event
 document.addEventListener('keydown', function(event) {
