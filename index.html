@@ -1,0 +1,96 @@
+<!DOCTYPE html> 
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Guitar Notes Trainer</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div class="container">
+    <h1>Notes Trainer</h1>
+    
+    <div class="controls-container">
+      <div class="controls">
+        <label for="interval-select">Інтервал зміни (сек):</label>
+        <select id="interval-select">
+          <option value="2" selected>2 сек</option>
+          <option value="3">3 сек</option>
+          <option value="5">5 сек</option>
+          <option value="7">7 сек</option>
+        </select>
+        
+        <button id="start-button">Старт</button>
+<br>
+        <label>
+          <input type="checkbox" id="scale-mode-checkbox">
+          Знайти гамму
+        </label>
+        <label>
+          <input type="checkbox" id="show-full-scale-checkbox">
+          Показати повну гаму
+        </label>
+        <select id="scale-type-select">
+          <option value="major">Мажор</option>
+          <option value="minor">Мінор</option>
+          <option value="harmonicMinor">Гармонічний мінор</option>
+          <option value="melodicMinor">Мелодичний мінор</option>
+          <option value="pentatonicMajor">Пентатоніка (мажор)</option>
+          <option value="pentatonicMinor">Пентатоніка (мінор)</option>
+          <option value="blues">Блюзова</option>
+          <option value="dorian">Дорійська</option>
+          <option value="phrygian">Фрігійська</option>
+          <option value="lydian">Лідійська</option>
+          <option value="mixolydian">Міксолідійська</option>
+          <option value="locrian">Локрійська</option>
+        </select>
+      </div>
+    
+      <div class="controls">
+        <p>Оберіть струни:</p>
+        <div id="strings-select">
+          <label><input type="checkbox" value="1" checked> 1</label>
+          <label><input type="checkbox" value="2" checked> 2</label>
+          <label><input type="checkbox" value="3" checked> 3</label>
+          <label><input type="checkbox" value="4" checked> 4</label>
+          <label><input type="checkbox" value="5" checked> 5</label>
+          <label><input type="checkbox" value="6" checked> 6</label>
+        </div>
+      </div>
+    </div>
+
+ <!-- Відображення вибраної ноти -->
+<div id="note-display"> Note </div>
+<div id="string-display" style="text-align: center; min-height: 1.5em; font-size: 1.5em;"></div>
+
+
+<label for="note-display-mode">Режим:</label>
+<select id="note-display-mode">
+  <option value="clear">Лише текст</option>
+  <option value="immediate">Показати одразу</option>
+  <option value="delay" selected>Показати з затримкою</option>
+  <!-- <option value="findgame">Знайти на слух</option> -->
+</select>
+
+<label>
+  <input type="checkbox" id="show-string-checkbox" checked>
+  Показувати струну
+</label>
+    
+
+    <br>
+
+
+    <!-- Блок, який містить гриф та вибір акордів -->
+    <div id="fretboard-wrapper">
+      <div class="fretboard-center">
+        <div id="fretboard"></div>
+    </div>
+    </div>
+    <div style="margin-top: 15px; text-align: center;">
+      <button id="clear-button">Очистити гриф</button>
+    </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
