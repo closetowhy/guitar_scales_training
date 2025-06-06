@@ -1,33 +1,20 @@
-<!DOCTYPE html> 
+<!DOCTYPE html>
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Guitar Notes Trainer</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.20"/>
+  <title>Scale Finder</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 <body>
+  
   <div class="container">
-    <h1>Notes Trainer</h1>
-    
+    <h1>Підбір гамм на грифі</h1>
+
     <div class="controls-container">
       <div class="controls">
-        <label for="interval-select">Інтервал зміни (сек):</label>
-        <select id="interval-select">
-          <option value="2" selected>2 сек</option>
-          <option value="3">3 сек</option>
-          <option value="5">5 сек</option>
-          <option value="7">7 сек</option>
-        </select>
-        
-        <button id="start-button">Старт</button>
-<br>
         <label>
-          <input type="checkbox" id="scale-mode-checkbox">
-          Знайти гамму
-        </label>
-        <label>
-          <input type="checkbox" id="show-full-scale-checkbox">
+          <input type="checkbox" id="show-full-scale-checkbox" checked>
           Показати повну гаму
         </label>
         <select id="scale-type-select">
@@ -45,7 +32,7 @@
           <option value="locrian">Локрійська</option>
         </select>
       </div>
-    
+
       <div class="controls">
         <p>Оберіть струни:</p>
         <div id="strings-select">
@@ -59,38 +46,33 @@
       </div>
     </div>
 
- <!-- Відображення вибраної ноти -->
-<div id="note-display"> Note </div>
-<div id="string-display" style="text-align: center; min-height: 1.5em; font-size: 1.5em;"></div>
-
-
-<label for="note-display-mode">Режим:</label>
-<select id="note-display-mode">
-  <option value="clear">Лише текст</option>
-  <option value="immediate">Показати одразу</option>
-  <option value="delay" selected>Показати з затримкою</option>
-  <!-- <option value="findgame">Знайти на слух</option> -->
-</select>
-
-<label>
-  <input type="checkbox" id="show-string-checkbox" checked>
-  Показувати струну
-</label>
     
+<div style="text-align: center; margin-top: 2px;">
+  <label style="font-size: 1.1rem; cursor: pointer;">
+    <input type="checkbox" id="lock-scale-checkbox" style="transform: scale(1.2); margin-right: 8px;">
+    Lock Scale
+  </label>
+</div>
 
-    <br>
+<!-- <label for="fret-count-input">Кількість ладів: </label>
+<input type="number" id="fret-count-input" min="5" max="24" value="15" />
+<button id="update-fretboard">Оновити гриф</button> -->
+<!-- Від: <input type="number" id="fret-from" value="0" min="0" max="15">
+До: <input type="number" id="fret-to" value="15" min="0" max="15">
+<button id="update-fretboard">Оновити</button> -->
 
-
-    <!-- Блок, який містить гриф та вибір акордів -->
     <div id="fretboard-wrapper">
       <div class="fretboard-center">
         <div id="fretboard"></div>
+      </div>
     </div>
-    </div>
+
     <div style="margin-top: 15px; text-align: center;">
       <button id="clear-button">Очистити гриф</button>
     </div>
 
-  <script src="script.js"></script>
+    <script src="script.js"></script>
+  </div>
+
 </body>
 </html>
