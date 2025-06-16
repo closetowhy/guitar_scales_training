@@ -45,7 +45,7 @@ function createFretboard() {
       const { note, octave } = getNoteAndOctave(stringData.note, stringData.octave, fret);
       cell.classList.add('fret');
 
-      if (fret === 0||fret%12===0) {
+      if (fret === 0||fret % 12 === 0) {
         cell.classList.add('open-string');
       }
 
@@ -78,6 +78,7 @@ function createFretboard() {
     fretboard.appendChild(row);
   });
 }
+
 
 function getNoteIndex(note) {
   return chromatic.indexOf(note);
@@ -194,35 +195,6 @@ function getSelectedStrings() {
   return selected.length ? selected : [1];
 }
 
-// function clearHighlights() {
-//   document.querySelectorAll('.fret.highlight').forEach(cell => {
-//     cell.classList.remove('highlight');
-//     const noteText = cell.querySelector('.note-main')?.textContent || '';
-//     const baseColor = colors[noteText[0]] || '#666';
-//     cell.style.backgroundColor = `${baseColor}22`;
-//     cell.style.color = 'white';
-//   });
-// }
-// function clearHighlights() {
-//   document.querySelectorAll('.fret').forEach(cell => {
-//     cell.classList.remove('highlight', 'tonic');
-
-//     const noteText = cell.querySelector('.note-main')?.textContent || '';
-//     const baseColor = colors[noteText[0]] || '#666';
-
-//     // Відновлюємо тьмяний фон
-//     if (noteText.includes('/')) {
-//       const [left, right] = noteText.split('/');
-//       const colorLeft = colors[left[0]] || '#666';
-//       const colorRight = colors[right[0]] || '#666';
-//       cell.style.background = `linear-gradient(to right, ${colorLeft}22 50%, ${colorRight}22 50%)`;
-//     } else {
-//       cell.style.backgroundColor = `${baseColor}22`;
-//     }
-
-//     cell.style.color = 'white';
-//   });
-// }
 
 function clearHighlights() {
   document.querySelectorAll('.fret').forEach(cell => {
@@ -238,27 +210,147 @@ function clearHighlights() {
 
 const lockScale = document.getElementById('lock-scale-checkbox')?.checked;
 
-function showScaleDegrees(scaleNotes) {
-  // Контейнер для ступенів
-  const container = document.createElement('div');
-  container.style.marginLeft = '20px';
-  container.style.fontFamily = 'monospace';
-  container.style.whiteSpace = 'pre'; // щоб зберігати відступи
 
-  // Масив римських чисел для ступенів
-  const degrees = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII'];
+function getChordTypesForScale(scaleType) {
+  switch (scaleType) {
+    case 'major':
+      return ['maj', 'min', 'min', 'maj', 'maj', 'min', 'dim'];
+    case 'minor':
+      return ['min', 'dim', 'maj', 'min', 'min', 'maj', 'maj'];
+    case 'harmonicMinor':
+      return ['min', 'dim', 'aug', 'min', 'maj', 'maj', 'dim'];
+    case 'melodicMinor':
+      return ['min', 'min', 'aug', 'maj', 'maj', 'dim', 'dim'];
+    case 'pentatonicMajor':
+    case 'pentatonicMinor':
+    case 'blues':
+      return []; // Поки без акордів
+    case 'dorian':
+      return ['min', 'min', 'maj', 'maj', 'min', 'dim', 'maj'];
+    case 'phrygian':
+      return ['min', 'maj', 'maj', 'min', 'dim', 'maj', 'min'];
+    case 'lydian':
+      return ['maj', 'maj', 'min', 'dim', 'maj', 'min', 'min'];
+    case 'mixolydian':
+      return ['maj', 'min', 'dim', 'maj', 'min', 'min', 'maj'];
+    case 'locrian':
+      return ['dim', 'maj', 'min', 'min', 'maj', 'maj', 'min'];
+    default:
+      return ['maj', 'min', 'min', 'maj', 'maj', 'min', 'dim'];
+  }
+}
 
-  // Формуємо текст
-  let text = '';
-  for (let i = 0; i < degrees.length; i++) {
-    text += `${degrees[i].padEnd(4)}- ${scaleNotes[i]}\n`;
+// Прогресії для різних типів гам
+const progressionByScaleType = {
+  major: [
+    { name: "I–V–vi–IV", steps: ['I', 'V', 'vi', 'IV'] },
+    { name: "ii–V–I", steps: ['ii', 'V', 'I'] },
+    { name: "I–vi–IV–V", steps: ['I', 'vi', 'IV', 'V'] },
+    { name: "I–IV–V", steps: ['I', 'IV', 'V'] },
+  ],
+  minor: [
+    { name: "i–iv–v-i", steps: ['i', 'iv', 'v', 'i'] },
+    { name: "i–VI–III–VII", steps: ['i', 'VI', 'III', 'VII'] },
+    { name: "ii°–V–i", steps: ['ii°', 'V', 'i'] },
+  ],
+  dorian: [
+    { name: "i–IV–v", steps: ['i', 'IV', 'v'] },
+    { name: "i–VII–IV", steps: ['i', 'VII', 'IV'] },
+  ],
+  phrygian: [
+    { name: "i–II–v", steps: ['i', 'II', 'v'] },
+  ],
+  lydian: [
+    { name: "I–II–V", steps: ['I', 'II', 'V'] },
+  ],
+  mixolydian: [
+    { name: "I–VII–IV", steps: ['I', 'VII', 'IV'] },
+  ],
+  locrian: [
+    { name: "i°–VII–v", steps: ['i°', 'VII', 'v'] },
+  ],
+  harmonicMinor: [
+    { name: "i–iv–V", steps: ['i', 'iv', 'V'] },
+    { name: "i–VI–III–VII", steps: ['i', 'VI', 'III', 'VII'] },
+  ],
+  melodicMinor: [
+    { name: "i–II–V", steps: ['i', 'II', 'V'] },
+  ],
+};
+
+function showScaleDegrees(rootNote, rootOctave, scaleType, scaleNotes) {
+  const chordTypes = getChordTypesForScale(scaleType);
+
+  for (let i = 0; i < 7; i++) {
+    const noteObj = scaleNotes[i];
+    const noteText = noteObj ? `${noteObj.note}` : '';
+    const chord = chordTypes[i] ? `${noteText}${chordTypes[i]}` : '';
+
+    const noteEl = document.getElementById(`note-${i + 1}`);
+    const chordEl = document.getElementById(`chord-${i + 1}`);
+
+    if (noteEl) noteEl.textContent = noteText;
+    if (chordEl) chordEl.textContent = chord;
+  }
+}
+
+function renderProgressions(scaleNotes, scaleType) {
+  const chordTypes = getChordTypesForScale(scaleType);
+
+  // Вибираємо прогресії для поточного типу гами,
+  // якщо немає — беремо мажорні за замовчуванням
+  const progressionDefs = progressionByScaleType[scaleType] || progressionByScaleType['major'];
+
+  const romanToIndex = {
+    // великі літери — мажорні ступені
+    'I': 0, 'ii': 1, 'II': 1, 'iii': 2, 'III': 2, 'IV': 3,
+    'V': 4, 'vi': 5, 'VI': 5, 'vii': 6, 'VII': 6,
+
+    // малі літери — мінорні
+    'i': 0, 'ii°': 1, 'iv': 3, 'v': 4, 'VI': 5, 'III': 2, 'VII': 6,
+
+    // додатково для зменшеного ступеня (dim)
+    'ii°': 1, 'i°': 0
+  };
+
+  const container = document.getElementById('progression-display');
+  container.innerHTML = ''; // очищуємо
+
+const maxChordsPerRow = 4;
+
+progressionDefs.forEach(p => {
+  const row = document.createElement('div');
+  row.className = 'progression-row';
+
+  const title = document.createElement('span');
+  title.className = 'progression-name';
+  title.textContent = p.name;
+  row.appendChild(title);
+
+  for (let i = 0; i < maxChordsPerRow; i++) {
+    const r = p.steps[i];
+    let chord = '';
+
+    if (r) {
+      const idx = romanToIndex[r];
+      if (idx >= 0 && scaleNotes[idx]) {
+        const note = scaleNotes[idx].note;
+        chord = chordTypes[idx] ? `${note}${chordTypes[idx]}` : '?';
+      } else {
+        chord = '?';
+      }
+    }
+
+    const chordSpan = document.createElement('span');
+    chordSpan.className = 'progression-chord';
+    chordSpan.textContent = chord;
+    row.appendChild(chordSpan);
   }
 
-  container.textContent = text;
-
-  // Додаємо цей блок до DOM, наприклад, після грифу
-  document.body.appendChild(container);
+  container.appendChild(row);
+});
 }
+
 
 function handleCellClick(stringData, fret) {
   const { note, octave } = getNoteAndOctave(stringData.note, stringData.octave, fret);
@@ -275,6 +367,9 @@ function handleCellClick(stringData, fret) {
     ? computeFullScaleAllOctaves(note, scaleType)
     : computeFullScale(note, octave, scaleType);
 
+    
+  showScaleDegrees(note, octave, scaleType, scaleNotes); 
+  renderProgressions(scaleNotes, scaleType);
   const selectedStrings = getSelectedStrings();
 
   clearHighlights();
@@ -302,6 +397,8 @@ function handleCellClick(stringData, fret) {
     }
     }
   });
+
+
 }
 
 

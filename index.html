@@ -2,9 +2,10 @@
 <html lang="uk">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.20"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1"/>
   <title>Scale Finder</title>
   <link rel="stylesheet" href="style.css" />
+  <link rel="icon" type="image/png" href="icons8-rock-music-100.png">
 </head>
 <body>
   
@@ -34,8 +35,9 @@
       </div>
 
       <div class="controls">
-        <p>Оберіть струни:</p>
+
         <div id="strings-select">
+            <p>Оберіть струни:</p>
           <label><input type="checkbox" value="1" checked> 1</label>
           <label><input type="checkbox" value="2" checked> 2</label>
           <label><input type="checkbox" value="3" checked> 3</label>
@@ -46,7 +48,9 @@
       </div>
     </div>
 
-    
+    <br>
+    <br>
+    <br>
 <div style="text-align: center; margin-top: 2px;">
   <label style="font-size: 1.1rem; cursor: pointer;">
     <input type="checkbox" id="lock-scale-checkbox" style="transform: scale(1.2); margin-right: 8px;">
@@ -66,10 +70,31 @@
         <div id="fretboard"></div>
       </div>
     </div>
-
-    <div style="margin-top: 15px; text-align: center;">
+      <div style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
       <button id="clear-button">Очистити гриф</button>
     </div>
+
+<div class="below-fretboard">
+  <div id="scale-degrees-panel">
+    <div class="scale-table-header">
+      <span>Ступінь</span>
+      <span>Нота</span>
+      <span>Акорд</span>
+    </div>
+<div class="scale-degree-row"><span title="Тоніка">I</span><span id="note-1"></span><span id="chord-1"></span></div>
+<div class="scale-degree-row"><span title="Супертоніка">II</span><span id="note-2"></span><span id="chord-2"></span></div>
+<div class="scale-degree-row"><span title="Медіанта">III</span><span id="note-3"></span><span id="chord-3"></span></div>
+<div class="scale-degree-row"><span title="Субдомінанта">IV</span><span id="note-4"></span><span id="chord-4"></span></div>
+<div class="scale-degree-row"><span title="Домінанта">V</span><span id="note-5"></span><span id="chord-5"></span></div>
+<div class="scale-degree-row"><span title="Субмедіанта">VI</span><span id="note-6"></span><span id="chord-6"></span></div>
+<div class="scale-degree-row"><span title="Ведучий тон / Субтоніка">VII</span><span id="note-7"></span><span id="chord-7"></span></div>
+
+  </div>
+
+  <div id="progression-display"></div>
+</div>
+
+
 
     <script src="script.js"></script>
   </div>

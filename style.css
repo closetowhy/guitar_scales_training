@@ -7,9 +7,10 @@ body {
     /* align-items: center;
     height: 100vh; */
     margin: 0;
-    zoom: 120%; /*test*/
+     zoom: 120%; 
   }
   
+
   .container {
     text-align: center;
     max-width: 900px;
@@ -37,12 +38,19 @@ body {
     margin: 5px 0;
   }
   
-  #strings-select {
+  /* #strings-select {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     margin-top: 10px;
-  }
+  } */
+
+  #strings-select {
+  display: flex;
+  gap: 15px; /* відстань між чекбоксами */
+  flex-wrap: nowrap; /* щоб вони не переносилися */
+  align-items: center; /* вертикальне вирівнювання */
+}
   
   #strings-select label {
     margin-bottom: 5px;
@@ -59,6 +67,7 @@ body {
     justify-content: center;
     align-items: flex-start;
     margin-top: 15px;
+    /*margin-right: 500px;*/
     width: 100%;
     max-width: 2000px;
     padding: 0 20px;
@@ -81,6 +90,7 @@ body {
     width: 100%;
     max-width: 2000px;
     margin: 0 auto;
+    margin-right: 30px;
   }
   
   .fret-row {
@@ -163,3 +173,115 @@ body {
   outline: 4px solid white;
   outline-offset: -4px;
 } */
+
+.fret-marker {
+  height: 1em;
+  line-height: 1em;
+  text-align: center;
+  color: #ccc;
+  font-size: 0.85em;
+}
+
+.below-fretboard {
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  margin-top: 20px;
+  gap: 30px; /* відстань між ступенями і прогресією */
+  flex-wrap: wrap; /* щоб на малих екранах переходило вниз */
+}
+
+#scale-degrees-panel {
+  color: #fff;
+  font-family: monospace;
+  font-size: 1rem;
+  padding: 10px;
+  min-width: 220px;
+  background-color: #333;
+  border-radius: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.scale-table-header,
+.scale-degree-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  border-bottom: 1px dashed #444;
+  padding-bottom: 2px;
+}
+
+.scale-table-header {
+  font-weight: bold;
+  color: #aaa;
+  border-bottom: 2px solid #777;
+}
+
+.scale-degree-row span,
+.scale-table-header span {
+  display: inline-block;
+}
+
+/* Фіксована ширина колонок */
+.scale-table-header span:nth-child(1),
+.scale-degree-row span:nth-child(1) {
+  width: 80px;  /* Ступінь */
+}
+
+.scale-table-header span:nth-child(2),
+.scale-degree-row span:nth-child(2) {
+  width: 80px;  /* Нота */
+}
+
+.scale-table-header span:nth-child(3),
+.scale-degree-row span:nth-child(3) {
+  width: 80px; /* Акорд */
+}
+
+/* #progression-display {
+  padding: 10px;
+  background-color: #2a2a2a;
+  border-radius: 6px;
+  font-family: monospace;
+  color: #fff;
+  border: 1px solid #444;
+  min-width: 300px;
+  max-width: 500px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-height: 100px;
+white-space: pre;
+} */
+
+#progression-display {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-family: monospace;
+  color: #fff;
+  min-height: 120px;
+  min-width: 300px;
+  max-width: 300px;
+}
+
+.progression-row {
+  display: grid;
+  grid-template-columns: 100px repeat(4, 60px); /* Назва + 4 акорди */
+  gap: 12px;
+  align-items: center;
+}
+
+.progression-name {
+  min-width: 100px; /* ширина для назви */
+  font-weight: bold;
+}
+
+.progression-chord {
+  width: 60px; /* фіксована ширина для акорду */
+  text-align: center;
+}
