@@ -20,9 +20,120 @@ const colors = {
   E: '#ffcc00', F: '#FF922B', G: '#33cc33'
 };
 
-const fretCount = 15;
+const tuningPresets = {
+  standard: {
+    name: 'Standard (E)',
+    tuning: ['E2', 'A2', 'D3', 'G3', 'B3', 'E4']
+  },
+  dropD: {
+    name: 'Drop D',
+    tuning: ['D2', 'A2', 'D3', 'G3', 'B3', 'E4']
+  },
+  dStandard: {
+    name: 'D Standard',
+    tuning: ['D2', 'G2', 'C3', 'F3', 'A3', 'D4']
+  },
+  dadgad: {
+    name: 'DADGAD',
+    tuning: ['D2', 'A2', 'D3', 'G3', 'A3', 'D4']
+  },
+  openC: {
+    name: 'Open C',
+    tuning: ['C2', 'G2', 'C3', 'G3', 'C4', 'E4']
+  },
+  openD: {
+    name: 'Open D',
+    tuning: ['D2', 'A2', 'D3', 'F#3', 'A3', 'D4']
+  }
+};
+
+function applyTuningPreset(presetKey) {
+  const preset = tuningPresets[presetKey];
+  if (!preset) return;
+
+  preset.tuning.forEach((noteStr, i) => {
+    const match = noteStr.match(/^([A-G](#|b)?)(\d)$/);
+    if (!match) return;
+
+    const { note } = sanitizeInputNote(match[1]);
+    const octave = Number(match[3]);
+
+    // string: 6 → 1
+    openNotes[i].note = note;
+    openNotes[i].octave = octave;
+  });
+
+  createFretboard();
+}
+
+
+const presetSelect = document.getElementById('tuning-preset-select');
+
+Object.entries(tuningPresets).forEach(([key, preset]) => {
+  const option = document.createElement('option');
+  option.value = key;
+  option.textContent = preset.name;
+  presetSelect.appendChild(option);
+});
+
+presetSelect.addEventListener('change', () => {
+  if (presetSelect.value) {
+    applyTuningPreset(presetSelect.value);
+  }
+});
+
+
+function changeStringTuning(stringNumber) {
+  const stringData = openNotes.find(s => s.string === stringNumber);
+  if (!stringData) return;
+
+  const input = prompt(
+    `Enter tuning for string ${stringNumber} (e.g. D#3 or Eb3)`,
+    `${stringData.note}${stringData.octave}`
+  );
+
+  if (!input) return;
+
+  const match = input.trim().match(/^([A-G](#|b)?)(\d)$/);
+  if (!match) {
+    alert("Invalid format. Example: D#3 or Eb3");
+    return;
+  }
+
+  const { note: safeNote, warning } = sanitizeInputNote(match[1]);
+
+  if (warning) {
+    console.warn(warning);
+    alert(warning);
+  }
+
+  stringData.note = safeNote;
+  stringData.octave = Number(match[3]);
+
+  createFretboard();
+}
+const fretCountInput = document.getElementById('fret-count-input');
+
+fretCountInput.addEventListener('change', () => {
+  let value = Number(fretCountInput.value);
+
+  if (Number.isNaN(value)) return;
+
+  // limit 1–24
+  value = Math.max(1, Math.min(24, value));
+
+  fretCount = value;
+  fretCountInput.value = value; // UI
+
+  createFretboard();
+});
+
+
+
+let fretCount = 15;
 
 function createFretboard() {
+  fretboard.replaceChildren();
   const header = document.createElement('div');
   header.classList.add('fret-row');
   header.innerHTML = `<div class="header">Лад Стр.</div>` +
@@ -35,10 +146,28 @@ function createFretboard() {
     const row = document.createElement('div');
     row.classList.add('fret-row');
 
-    const label = document.createElement('div');
-    label.classList.add('header');
-    label.textContent = `${stringData.string}`;
-    row.appendChild(label);
+
+    //change button;
+const label = document.createElement('div');
+label.classList.add('header', 'string-control-cell');
+
+const tuningBtn = document.createElement('button');
+tuningBtn.classList.add('string-tuning-btn');
+tuningBtn.title = 'Change tuning';
+tuningBtn.innerHTML = '⚙';
+
+tuningBtn.addEventListener('click', () => {
+  changeStringTuning(stringData.string);
+});
+
+const stringNumber = document.createElement('span');
+stringNumber.classList.add('string-number');
+stringNumber.textContent = stringData.string; // 1–6
+
+label.appendChild(tuningBtn);
+label.appendChild(stringNumber);
+
+row.appendChild(label);
 
     for (let fret = 0; fret <= fretCount; fret++) {
       const cell = document.createElement('div');
@@ -77,22 +206,92 @@ function createFretboard() {
 
     fretboard.appendChild(row);
   });
+  
 }
 
+function normalizeNote(note) {
+  let n = note.includes('/') ? note.split('/')[0] : note;
+  return enharmonicMap[n] || n;
+}
+
+const enharmonicMap = {
+  'Cb': 'B',
+  'Db': 'C#',
+  'Eb': 'D#',
+  'Fb': 'E',
+  'Gb': 'F#',
+  'Ab': 'G#',
+  'Bb': 'A#',
+  'E#': 'F',
+  'B#': 'C'
+};
 
 function getNoteIndex(note) {
-  return chromatic.indexOf(note);
+  // Return index of the normalized note in the chromatic scale
+  return normalizedChromatic.indexOf(normalizeNote(note));
 }
 
 function getNoteAndOctave(baseNote, baseOctave, fret) {
-  const noteIndex = getNoteIndex(baseNote);
-  const newIndex = (noteIndex + fret) % chromatic.length;
-  const octaveShift = Math.floor((noteIndex + fret) / chromatic.length);
+  // Normalize the base note (handles enharmonic equivalents)
+  const normBase = normalizeNote(baseNote);
+
+  // Find the base note index in the normalized chromatic scale
+  const noteIndex = normalizedChromatic.indexOf(normBase);
+
+  // Safety fallback: should never happen if input is sanitized,
+  // but prevents the fretboard from breaking
+  if (noteIndex < 0) {
+    return {
+      note: chromatic[0],
+      octave: baseOctave
+    };
+  }
+
+  // Absolute semitone index from the base note
+  const abs = noteIndex + fret;
+
+  // Wrap around within one octave
+  const newIndex = abs % 12;
+
+  // Calculate octave shift
+  const octaveShift = Math.floor(abs / 12);
+
   return {
+    // Use display chromatic scale (e.g. C#/Db)
     note: chromatic[newIndex],
     octave: baseOctave + octaveShift
   };
 }
+
+function sanitizeInputNote(note) {
+  // Remove enharmonic display (e.g. "C#/Db" -> "C#")
+  let n = note.includes('/') ? note.split('/')[0] : note;
+
+  // 1) Already valid normalized note (C, C#, D, ...)
+  if (normalizedChromatic.includes(n)) {
+    return { note: n, warning: null };
+  }
+
+  // 2) Flats are allowed and silently converted to sharps
+  if (n.endsWith('b') && enharmonicMap[n]) {
+    return { note: enharmonicMap[n], warning: null };
+  }
+
+  // 3) Theoretical notes (E#, B#, Cb, Fb) → convert with warning
+  if (enharmonicMap[n]) {
+    return {
+      note: enharmonicMap[n],
+      warning: `${n} is a theoretical note and was converted to ${enharmonicMap[n]}`
+    };
+  }
+
+  // 4) Completely invalid input → hard fallback
+  return {
+    note: 'C',
+    warning: `${n} is invalid and was replaced with C`
+  };
+}
+
 
 function getFrequency(note, octave) {
   const noteIndex = normalizedChromatic.indexOf(normalizeNote(note));
