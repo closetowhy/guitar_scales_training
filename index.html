@@ -71,8 +71,26 @@
       </div>
     </div>
       <div style="margin-top: 10px; margin-bottom: 10px; text-align: center;">
-      <button id="clear-button">Очистити гриф</button>
+      <button id="clear-button">Clear</button>
+      <br>
+      <div class="tuning-preset-wrapper">
+        <span class="tuning-label">Tuning preset</span>
+        <select id="tuning-preset-select"></select>
+      </div>
+
+      <div class="fret-count-wrapper">
+      <span class="fret-count-label">Frets</span>
+      <input
+        id="fret-count-input"
+        type="number"
+        min="1"
+        max="24"
+        value="15"
+      />
     </div>
+    </div>
+
+    
 
 <div class="below-fretboard">
   <div id="scale-degrees-panel">
